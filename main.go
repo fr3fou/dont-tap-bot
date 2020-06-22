@@ -24,5 +24,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	robotgo.CaptureScreen(x, y, w, h)
+	bmp := robotgo.CaptureScreen(x, y, w, h)
+	defer robotgo.FreeBitmap(bmp)
 }
