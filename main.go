@@ -49,6 +49,9 @@ func main() {
 			defer robotgo.FreeBitmap(bmp)
 
 			mouseX, mouseY := robotgo.FindBitmap(black, bmp)
+			if mouseX == -1 || mouseY == -1 {
+				continue
+			}
 
 			robotgo.MoveClick(x+mouseX+80, y+mouseY+80)
 			robotgo.MilliSleep(25)
