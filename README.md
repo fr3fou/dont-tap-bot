@@ -15,5 +15,5 @@ Use a tool like [ShareX](https://getsharex.com/) to get the coordinates easily
 $ go run main.go 630 230 640 640
 ```
 
-F9 to Quit
-F10 to Toggle On/Off
+- F9 to Quit
+- F10 to Toggle On/Off
