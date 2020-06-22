@@ -51,7 +51,7 @@ func main() {
 			mouseX, mouseY := robotgo.FindBitmap(black, bmp)
 
 			robotgo.MoveClick(x+mouseX+80, y+mouseY+80)
-			robotgo.MilliSleep(500)
+			robotgo.MilliSleep(25)
 		}
 	}
 }
