@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -24,6 +25,33 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	bmp := robotgo.CaptureScreen(x, y, w, h)
-	defer robotgo.FreeBitmap(bmp)
+
+	black := robotgo.OpenBitmap("black.png")
+	defer robotgo.FreeBitmap(black)
+
+	fmt.Println("Press F10 to start...")
+	start := robotgo.AddEvent("f10")
+	if start {
+		fmt.Println("Starting...")
+	}
+
+	hook := robotgo.EventStart()
+	defer robotgo.EventEnd()
+
+	for {
+		select {
+		case v := <-hook:
+			if v.Rawcode == 120 {
+				return
+			}
+		default:
+			bmp := robotgo.CaptureScreen(x, y, w, h)
+			defer robotgo.FreeBitmap(bmp)
+
+			mouseX, mouseY := robotgo.FindBitmap(black, bmp)
+
+			robotgo.MoveClick(x+mouseX+80, y+mouseY+80)
+			robotgo.MilliSleep(500)
+		}
+	}
 }
