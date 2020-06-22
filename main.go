@@ -8,6 +8,20 @@ import (
 	"github.com/go-vgo/robotgo"
 )
 
+// Square is the square bitmap
+const Square = "b50,50,eNrtwTEBAAAAwqD1T+1vBqAAAAAAAAAAeAMdTAAB"
+
+// F keys
+const (
+	F9  = 120
+	F10 = 121
+)
+
+// Events
+const (
+	KeyUp = 5
+)
+
 func main() {
 	x, err := strconv.Atoi(os.Args[1])
 	if err != nil {
@@ -26,35 +40,60 @@ func main() {
 		panic(err)
 	}
 
-	black := robotgo.OpenBitmap("black.png")
-	defer robotgo.FreeBitmap(black)
+	fmt.Println("Press F10 to start / stop!")
+	fmt.Println("Press F9 to quit!")
 
-	fmt.Println("Press F10 to start...")
-	start := robotgo.AddEvent("f10")
-	if start {
-		fmt.Println("Starting...")
-	}
-
+	// Start async event listener
 	hook := robotgo.EventStart()
 	defer robotgo.EventEnd()
 
+	isRunning := false
+
+	qc := make(chan struct{})
+
+	for v := range hook {
+		if v.Kind != KeyUp {
+			continue
+		}
+
+		switch v.Rawcode {
+		case F9:
+			fmt.Println("Quitting!")
+			qc <- struct{}{}
+			return
+		case F10:
+			if isRunning {
+				isRunning = false
+				fmt.Println("Stopping!")
+				qc <- struct{}{}
+			} else {
+				isRunning = true
+				fmt.Println("Starting!")
+				go play(qc, x, y, w, h)
+			}
+		}
+	}
+}
+
+func play(qc chan struct{}, x, y, w, h int) {
+	square := robotgo.BitmapFromStr(Square)
+	defer robotgo.FreeBitmap(square)
+
 	for {
 		select {
-		case v := <-hook:
-			if v.Rawcode == 120 {
-				return
-			}
+		case <-qc:
+			return
 		default:
 			bmp := robotgo.CaptureScreen(x, y, w, h)
 			defer robotgo.FreeBitmap(bmp)
 
-			mouseX, mouseY := robotgo.FindBitmap(black, bmp)
+			mouseX, mouseY := robotgo.FindBitmap(square, bmp)
 			if mouseX == -1 || mouseY == -1 {
 				continue
 			}
 
 			robotgo.MoveClick(x+mouseX+80, y+mouseY+80)
-			robotgo.MilliSleep(25)
+			robotgo.MilliSleep(28)
 		}
 	}
 }
