@@ -1,5 +1,5 @@
 # dont-go
-🤖 Bot that plays http://donttap.com
+🤖 Bot that plays http://www.donttap.com
 
 ## Usage
 
