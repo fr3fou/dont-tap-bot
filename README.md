@@ -1,4 +1,4 @@
-# dont-tap
+# dont-tap-bat
 🤖 Bot that plays http://www.donttap.com
 
 ## Usage
